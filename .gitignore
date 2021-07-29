@@ -1,0 +1,4 @@
+logGenerator
+Makefile.local
+fluentd/k8s/overlays/local
+fluentd/conf/local
