@@ -3,7 +3,7 @@ kind: Kustomization
 commonLabels:
   app: stride-logging
   release: local
-namespace: stride-logging
+namespace: ops-pr-webhook
 resources:
   - ../../base
 images:
@@ -13,3 +13,6 @@ configMapGenerator:
   - name: fluent-conf
     files:
       - fluentdConfs/fluent.conf
+      - fluentdConfs/pods.conf
+      - fluentdConfs/elasticsearch.conf
+      - fluentdConfs/s3.conf

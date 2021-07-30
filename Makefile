@@ -1,7 +1,7 @@
 APP_ROOT ?= $(shell 'pwd')
 
-export ELASTIC_SEARCH_PATH = elasticsearch/k8s
-export KIBANA_PATH = kibana/k8s
+export ELASTIC_SEARCH_PATH = elasticsearch/k8s/overlays/$(STAGE)
+export KIBANA_PATH = kibana/k8s/overlays/$(STAGE)
 export FLUENT_D_PATH = fluentd/k8s/overlays/$(STAGE)
 
 export FLUENT_D_DOCKER_BUILD_FLAGS ?= --no-cache
@@ -10,12 +10,6 @@ export FLUENT_D_DOCKER_FILE ?= $(APP_ROOT)/fluentd/Dockerfile
 export FLUENT_D_SOURCE_IMAGE ?= stride-fluentd
 export FLUENT_D_TARGET_IMAGE ?= $(REGISTRY_URL)/$(ECR_REPO_NAME)
 export FLUENT_D_TARGET_IMAGE_LATEST ?= $(FLUENT_D_TARGET_IMAGE):$(FLUENT_D_TARGET_IMAGE)
-
-use-kubectl-minikube-context: ## Use kubectl Minikube context
-	@kubectl config use-context minikube
-
-create-kubernetes-namespace: ## Create Kubenetes namespace: fleuntd
-	-kubectl create namespace stride-logging
 
 build-fluentd-image:
 	@docker build $(FLUENT_D_DOCKER_BUILD_FLAGS) --target  artifact -t $(FLUENT_D_SOURCE_IMAGE) -f $(FLUENT_D_DOCKER_FILE) $(FLUENT_D_DOCKER_BUILD_PATH)
@@ -40,4 +34,4 @@ deploy-fluentd: ## Deploy Elastic search
 
 publish-custom-fluentd-image: build-fluentd-image docker-tag-fluentd-image docker-login docker-push-fluentd
 
-start: use-kubectl-minikube-context create-kubernetes-namespace deploy-elasticsearch deploy-kibana deploy-fluentd 
+apply: deploy-elasticsearch deploy-kibana deploy-fluentd 

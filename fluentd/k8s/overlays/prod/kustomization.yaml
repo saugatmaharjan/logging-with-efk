@@ -3,7 +3,7 @@ kind: Kustomization
 commonLabels:
   app: stride-logging
   release: local
-namespace: fluentd
+namespace: stride-logging
 resources:
   - ../../base
 images:
