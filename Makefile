@@ -20,18 +20,26 @@ docker-tag-fluentd-image: ## docker tag
 docker-login: ## Login to ECR registry
 	aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(REGISTRY_URL)
 
+update-kubeconfig: ## Update kube config
+	@aws eks update-kubeconfig --name=$(EKS_CLUSTER_NAME) --region=$(AWS_REGION)
+
 docker-push-fluentd: ## docker push
 	@docker push $(FLUENT_D_TARGET_IMAGE_LATEST)
 
-deploy-elasticsearch: ## Deploy Elastic search
+apply-elasticsearch: ## Deploy Elastic search
 	@kubectl apply -f $(ELASTIC_SEARCH_PATH)
 
-deploy-kibana: ## Deploy Elastic search
+apply-kibana: ## Deploy Elastic search
 	@kubectl apply -f $(KIBANA_PATH)
 
-deploy-fluentd: ## Deploy Elastic search
+apply-fluentd: ## Deploy Elastic search
 	@kubectl apply -k $(FLUENT_D_PATH)
 
 publish-custom-fluentd-image: build-fluentd-image docker-tag-fluentd-image docker-login docker-push-fluentd
 
-apply: deploy-elasticsearch deploy-kibana deploy-fluentd 
+apply-all: apply-elasticsearch apply-kibana apply-fluentd 
+
+deploy: update-kubeconfig apply-all
+
+clean: ## Remove log file.
+	@rm -rf logs/**.log logs/**.json build
