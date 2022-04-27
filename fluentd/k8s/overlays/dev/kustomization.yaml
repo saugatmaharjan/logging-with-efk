@@ -2,13 +2,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 commonLabels:
   app: stride-logging
-  release: local
+  release: dev
 namespace: ops-pr-webhook
 resources:
   - ../../base
 images:
   - name: stride-logging
-    newName: saugat/logging
+    newName: 938631482679.dkr.ecr.us-west-1.amazonaws.com/stride-logging:latest
 configMapGenerator:
   - name: fluent-conf
     files:
